@@ -73,7 +73,8 @@
 
         <div class="flex items-center gap-1.5">
             <button onclick="exportData()" class="px-3 py-1.5 text-slate-500 hover:text-blue-600 transition text-[10px] font-black uppercase">Backup</button>
-            <button onclick="document.getElementById('importFile').click()" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-[12px] font-black hover:bg-blue-100 transition">Restore</button>
+            <button onclick="document.getElementById('importFile').click()" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black hover:bg-blue-100 transition">RESTORE</button>
+			<input type="file" id="importFile" class="hidden" onchange="importData(event)">
         </div>
 
         <div id="connection-status" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-100">
@@ -645,14 +646,45 @@ function renderPiutang() {
         a.download = `KM_Backup_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
     }
-    function importData(event) {
-        const reader = new FileReader();
-        reader.onload = (e) => { dataTransaksi = JSON.parse(e.target.result); saveToLocal(); renderTransaksi(); alert("Data berhasil dipulihkan!"); };
-        reader.readAsText(event.target.files[0]);
-    }
+function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
 
-    renderTransaksi();
-    updateCashFlow();
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            
+            if (Array.isArray(importedData)) {
+                // 1. Simpan ke variabel lokal
+                dataTransaksi = importedData;
+                
+                // 2. Simpan ke LocalStorage (Backup Lokal)
+                localStorage.setItem('db_penjualan_v4', JSON.stringify(dataTransaksi));
+                
+                // 3. Simpan ke Firebase (Sync Cloud)
+                dbRef.set(dataTransaksi)
+                    .then(() => {
+                        alert("✅ Data Berhasil Dipulihkan dan Disinkronkan ke Cloud!");
+                        renderTransaksi();
+                        if (typeof renderPiutang === 'function') renderPiutang();
+                        updateCashFlow();
+                    })
+                    .catch((err) => {
+                        alert("⚠️ Data lokal pulih, tapi gagal sinkron ke Cloud.");
+                        console.error(err);
+                    });
+            } else {
+                alert("Format file tidak valid!");
+            }
+        } catch (err) {
+            alert("Gagal membaca file: " + err.message);
+        }
+    };
+    reader.readAsText(file);
+    // Reset input agar bisa upload file yang sama berkali-kali jika perlu
+    event.target.value = '';
+}
 </script>
 </body>
 </html>
