@@ -79,7 +79,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div class="bg-blue-600 p-4 rounded-2xl shadow-lg text-white"><p class="text-[9px] font-bold uppercase opacity-80 mb-1 leading-none">Omset</p><h2 id="statOmset" class="text-lg font-black tracking-tighter">Rp 0</h2></div>
-            <div class="bg-emerald-500 p-4 rounded-2xl shadow-lg text-white"><p class="text-[9px] font-bold uppercase opacity-80 mb-1 leading-none">Cash In</p><h2 id="statCashIn" class="text-lg font-black tracking-tighter">Rp 0</h2></div>
+            <div class="bg-emerald-500 p-4 rounded-2xl shadow-lg text-white"><p class="text-[9px] font-bold uppercase opacity-80 mb-1 leading-none">Uang Masuk</p><h2 id="statCashIn" class="text-lg font-black tracking-tighter">Rp 0</h2></div>
             <div class="bg-rose-500 p-4 rounded-2xl shadow-lg text-white"><p class="text-[9px] font-bold uppercase opacity-80 mb-1 leading-none">Piutang</p><h2 id="statPiutang" class="text-lg font-black tracking-tighter">Rp 0</h2></div>
         </div>
     </div>
@@ -127,7 +127,7 @@
 
     <div id="piutang" class="tab-content">
         <div class="bg-white p-8 rounded-[2rem] shadow-sm border">
-            <h3 class="font-black text-slate-700 uppercase text-xs tracking-widest mb-8 border-b pb-4">Kartu Piutang Aktif</h3>
+            <h3 class="font-black text-slate-700 uppercase text-xs tracking-widest mb-8 border-b pb-4">Daftar Peiutang</h3>
             <div id="kartuPiutangContainer" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
         </div>
     </div>
@@ -371,7 +371,7 @@ function renderPiutang() {
             </div>
             <div class="flex gap-1.5 mb-3">
                 <input type="number" id="in-${t.id}" class="w-full p-2 bg-slate-50 border rounded-lg text-xs outline-none focus:border-emerald-500 font-bold" placeholder="Bayar Rp">
-                <button onclick="tambahCicilan(${t.id})" class="bg-emerald-500 text-white px-3 py-2 rounded-lg font-black text-[10px] hover:bg-emerald-600">PAY</button>
+                <button onclick="tambahCicilan(${t.id})" class="bg-emerald-500 text-white px-3 py-2 rounded-lg font-black text-[10px] hover:bg-emerald-600">Cicil</button>
             </div>
             <details class="text-[9px]">
                 <summary class="font-bold text-slate-400 uppercase cursor-pointer py-1 bg-slate-50 rounded text-center list-none">Riwayat Bayar ▼</summary>
@@ -475,7 +475,7 @@ function kirimWA(id) {
         `*🕒 RIWAYAT CICILAN:*%0A` +
         `${riwayatText}%0A` +
         `--------------------------------------------%0A` +
-        `Mohon segera melakukan pembayaran sesuai jadwal. Terima kasih telah berlangganan di KangKredit! 🙏🏻`;
+        `Mohon lakukan pembayaran sesuai jadwal. Terima kasih telah berlangganan di KangKredit! 🙏🏻`;
 
     window.open(`https://wa.me/${no}?text=${msg}`, '_blank');
 }
@@ -595,3 +595,4 @@ window.onload = () => {
 </script>
 </body>
 </html>
+
