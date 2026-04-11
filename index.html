@@ -304,6 +304,37 @@
 </div>
 
 <script>
+
+// --- SISTEM KEAMANAN KANGKREDIT PRO ---
+
+document.onkeydown = function(e) {
+    // 1. IZINKAN tombol Enter (13) untuk fungsi checkLogin() dan Input
+    if (e.keyCode == 13) {
+        return true; 
+    }
+
+    // 2. Blokir F12 (DevTools)
+    if (e.keyCode == 123) {
+        return false;
+    }
+
+    // 3. Blokir Shortcut Inspeksi (Ctrl+Shift+I, J, C)
+    if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0))) {
+        return false;
+    }
+
+    // 4. Blokir Ctrl+U (View Source) & Ctrl+S (Save Page)
+    if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0) || e.keyCode == 'S'.charCodeAt(0))) {
+        return false;
+    }
+};
+
+// 5. Matikan Klik Kanan (Anti Copy/Paste Data Pelanggan)
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+console.log("KangKredit v4.6 Security System: ACTIVE 🛡️");
+
+
 // --- DB & AUTH ---
 const MASTER_PASSWORD = "kreditku";
 function checkLogin() {
