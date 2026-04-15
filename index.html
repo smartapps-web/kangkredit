@@ -780,28 +780,24 @@ function updateCashFlow() {
 }
 
 function exportData() {
-    // 1. Ambil waktu sekarang
     const sekarang = new Date();
     
-    // 2. Susun format (tgl-bln-thn-jam-menit-detik)
+    // Format tanggal: tgl-bln-thn-jam-menit
     const tgl = sekarang.getDate().toString().padStart(2, '0');
     const bln = (sekarang.getMonth() + 1).toString().padStart(2, '0');
-    const thn = sekarang.getFullYear().toString().slice(-2); // Ambil 2 angka belakang tahun (26)
+    const thn = sekarang.getFullYear().toString().slice(-2);
     const jam = sekarang.getHours().toString().padStart(2, '0');
     const mnt = sekarang.getMinutes().toString().padStart(2, '0');
-    const dtk = sekarang.getSeconds().toString().padStart(2, '0');
 
-    // Nama file: kk_190226053500.json
-    const namaFile = `kk_${tgl}${bln}${thn}${jam}${mnt}${dtk}`;
+    // NAMA FILE BARU: kk_karman_190226_1030.json
+    const namaFile = `kk_${currentUser}_${tgl}${bln}${thn}_${jam}${mnt}`;
 
-    // 3. Proses download
     const blob = new Blob([JSON.stringify(dataTransaksi)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `${namaFile}.json`;
     a.click();
     
-    // Bersihkan URL blob
     URL.revokeObjectURL(a.href);
 }
 
