@@ -352,12 +352,13 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 // 2. LOGIKA JALUR DATABASE (PENTING!)
+// --- CARA SUB-FOLDER (LEBIH RAPI) ---
 if (currentUser === "karman") {
-    dbRef = db.ref("kangkredit"); // Karman tetap di jalur utama agar data lama aman
-    if(document.getElementById('display-user')) document.getElementById('display-user').innerText = "v4.6 | Admin: KARMAN";
+    // Karman masuk ke sub-folder sendiri
+    dbRef = db.ref("kangkredit/karman"); 
 } else if (currentUser === "taufik") {
-    dbRef = db.ref("kangkredit/taufik"); // Taufik di folder baru
-    if(document.getElementById('display-user')) document.getElementById('display-user').innerText = "v4.6 | User: TAUFIK";
+    // Taufik masuk ke sub-folder sendiri
+    dbRef = db.ref("kangkredit/taufik"); 
 }
 
 // 3. FUNGSI LOGIN YANG SUDAH DIPERBAIKI
