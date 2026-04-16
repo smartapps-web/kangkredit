@@ -454,71 +454,51 @@ function simpanTransaksi() {
 }
 
 function renderTransaksi() {
-    const fText = document.getElementById('filterGeneral').value.toLowerCase();
-    const fDate = document.getElementById('filterTanggal').value;
     const container = document.getElementById('listTransaksi');
+    if (!container) return; // Penjaga agar tidak error kalau element belum ada
+
+    // Ambil keyword filter
+    const filterInput = document.getElementById('filterGeneral');
+    const f = (filterInput ? filterInput.value : "").toLowerCase();
     
-    const filtered = dataTransaksi.filter(t => {
-        const mText = (t.pembeli || "").toLowerCase().includes(fText) || 
-                      (t.barang || "").toLowerCase().includes(fText) || 
-                      (t.alamat || "").toLowerCase().includes(fText);
-        const mDate = fDate === "" || t.tanggal === fDate;
-        return mText && mDate;
-    });
+    // Pastikan dataTransaksi adalah array (mencegah crash)
+    const list = Array.isArray(dataTransaksi) ? dataTransaksi : [];
+    
+    const filtered = list.filter(t => 
+        (t && t.pembeli || "").toLowerCase().includes(f) || 
+        (t && t.barang || "").toLowerCase().includes(f)
+    );
+    
+    let html = "";
+    filtered.slice().reverse().forEach(t => {
+        if (!t) return;
 
-    container.innerHTML = filtered.slice().reverse().map(t => `
-        <tr class="bg-white hover:bg-slate-50 border-b border-slate-100 transition-all duration-200">
-            <td class="px-3 py-2 text-slate-400 font-bold text-[9px] w-20">
-                ${t.tglDisplay}
-            </td>
-            
-            <td class="px-3 py-2">
+        // --- PENJAGA TO LOCALE STRING (BIAR GAK MATI LOGIN) ---
+        const h = (typeof t.harga === 'number') ? t.harga : (parseFloat(t.harga) || 0);
+        const s = (typeof t.sisa === 'number') ? t.sisa : (parseFloat(t.sisa) || 0);
+
+        html += `
+        <tr class="bg-white border-b text-[11px] hover:bg-slate-50 transition-all">
+            <td class="px-3 py-2 text-slate-400 font-bold">${t.tglDisplay || '-'}</td>
+            <td class="px-3 py-2 uppercase font-black">
                 <div class="flex flex-col">
-                    <span class="font-black uppercase text-slate-800 text-[11px] leading-tight">${t.pembeli}</span>
-                    <div class="flex items-center gap-2 mt-0.5">
-                        <span class="text-[9px] text-emerald-600 font-bold tracking-tighter">${t.no_hp || '-'}</span>
-                        <span class="text-slate-300 text-[9px]">|</span>
-                        <span class="text-[9px] text-slate-400 italic truncate max-w-[150px]">${t.alamat || '-'}</span>
-                    </div>
+                    <span>${t.pembeli || 'Tanpa Nama'}</span>
+                    <span class="text-[9px] text-slate-400 font-normal italic lowercase">${t.alamat || '-'}</span>
                 </div>
             </td>
-            
-            <td class="px-3 py-2 font-bold text-slate-700 text-[11px]">
-                Rp ${t.harga.toLocaleString()}
-            </td>
-            
-            <td class="px-3 py-2">
-                <div class="flex items-center gap-2">
-                    <span class="font-black ${t.sisa > 0 ? 'text-rose-600' : 'text-emerald-600'} text-[11px]">
-                        Rp ${t.sisa.toLocaleString()}
-                    </span>
-                    <span class="text-[7px] font-black uppercase px-1.5 py-0.5 rounded-md ${t.status === 'Lunas' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}">
-                        ${t.status}
-                    </span>
+            <td class="px-3 py-2 font-bold text-slate-700">Rp ${h.toLocaleString('id-ID')}</td>
+            <td class="px-3 py-2 font-black ${s > 0 ? 'text-rose-600' : 'text-emerald-600'}">Rp ${s.toLocaleString('id-ID')}</td>
+            <td class="px-3 py-2 text-right">
+                <div class="flex justify-end gap-1">
+                    <button onclick="openEditTransaksi(${t.id})" class="p-1.5 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-500 hover:text-white transition">✏️</button>
+                    <button onclick="openModalDetail(${t.id})" class="p-1.5 bg-emerald-50 text-emerald-600 rounded-md">📉</button>
+                    <button onclick="hapusTransaksi(${t.id})" class="p-1.5 bg-rose-50 text-rose-600 rounded-md">🗑️</button>
                 </div>
             </td>
-            
-
-<td class="px-3 py-2 text-right">
-    <div class="flex justify-end gap-1">
-        <button onclick="openModalDetail(${t.id})" class="p-1.5 bg-emerald-50 text-emerald-600 rounded-md hover:bg-emerald-600 hover:text-white transition shadow-sm" title="Cicilan & Bayar">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="5" width="20" height="14" rx="2" />
-                <line x1="2" y1="10" x2="22" y2="10" />
-                <path d="M7 15h.01M11 15h.01" />
-            </svg>
-        </button>
-        
-        <button onclick="openEditTransaksi(${t.id})" class="p-1.5 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-600 hover:text-white transition" title="Edit">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-        </button>
-        <button onclick="hapusTransaksi(${t.id})" class="p-1.5 bg-rose-50 text-rose-600 rounded-md hover:bg-rose-600 hover:text-white transition">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        </button>
-    </div>
-</td>
-        </tr>
-    `).join('');
+        </tr>`;
+    });
+    
+    container.innerHTML = html;
 }
 
 // --- MODAL DETAIL & PIUTANG LOGIC ---
